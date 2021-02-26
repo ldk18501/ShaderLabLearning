@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: L7_HMMat_AmbientMultiCol
+  m_Name: L7_HM_Mat_AmbientMultiCol
   m_Shader: {fileID: 4800000, guid: e841ad631e2fd554eb852c109ef93f1c, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
