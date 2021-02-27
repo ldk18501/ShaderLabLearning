@@ -7,7 +7,6 @@
         _NormalMap ("法线贴图", 2D) = "bump" { }
         
         [ToggleOff] _SpecTog ("高光开关", Int) = 1
-        _SpecCol ("高光颜色", Color) = (1.0, 1.0, 1.0, 1.0)
         _SpecPow ("高光次幂", Range(1, 100)) = 10
         
         [ToggleOff] _EnvLitTog ("环境光开关", Int) = 1
@@ -63,7 +62,7 @@
             struct VertexInput
             {
                 float4 vertex: POSITION;
-                float3 normal: NORMAL;
+                float4 normal: NORMAL;
                 float4 tangent: TANGENT;
                 float2 uv0: TEXCOORD0;
             };
@@ -116,8 +115,8 @@
                 //后处理
                 
                 //返回结果
-                float3 lambert = lDotN * _LightColor0.rgb;
-                float3 phong = pow(max(0.0, vrDotL), _SpecPow) * _SpecCol;
+                float3 lambert = max(0.0, lDotN) * _LightColor0.rgb;
+                float3 phong = pow(max(0.0, vrDotL), _SpecPow) * _LightColor0.rgb;
                 float shadow = LIGHT_ATTENUATION(i);
                 float3 envDiffuse = _BaseCol * (_EnvTopCol * top + _EnvMiddleCol * middle + _EnvBottomCol * bottom) * ao * _EnvRatio;
                 float3 envReflect = matcap * fresnel * ao * _ReflectIntensity;
