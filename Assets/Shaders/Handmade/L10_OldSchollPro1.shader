@@ -1,4 +1,4 @@
-﻿Shader "LDKCustom/L10_OldSchoolPro"
+﻿Shader "LDKCustom/L10_OldSchoolPro1"
 {
     Properties
     {
@@ -18,9 +18,7 @@
         _EnvBottomCol ("底部颜色", Color) = (1.0, 1.0, 1.0, 1.0)
         
         [ToggleOff] _EnvReflectTog ("环境反射开关", Int) = 1
-        _CubeMap ("CubeMap采样图", Cube) = "white" { }
-        // 最大值需要和图片的mipmap层数对应
-        _MipIntensity ("CubeMapMip强度", range(0.0, 7.0)) = 1.0
+        _MatCap ("MatCap采样图", 2D) = "white" { }
         _FresnelPow ("菲涅尔次幂", range(0.0, 10.0)) = 1.0
         _ReflectIntensity ("反射强度", range(1.0, 2.0)) = 1.0
     }
@@ -58,8 +56,7 @@
             uniform float3 _EnvBottomCol;
             
             uniform sampler2D _NormalMap;
-            uniform samplerCUBE _CubeMap;
-            uniform float _MipIntensity;
+            uniform sampler2D _MatCap;
             uniform float _FresnelPow;
             uniform float _ReflectIntensity;
             
@@ -102,14 +99,16 @@
                 float3 vDirWS = normalize(_WorldSpaceCameraPos.xyz - i.posWS);
                 float3 lDir = normalize(_WorldSpaceLightPos0.xyz);
                 float3 vRDirWS = reflect(vDirWS * - 1.0, nDirWS);
+                float4 nDirVS = mul(UNITY_MATRIX_V, float4(nDirWS, 0.0));
                 
                 //准备中间数据，如点积结果
                 float lDotN = dot(lDir, nDirWS);
                 float vrDotL = dot(lDir, vRDirWS);
-                float3 cubeMap = texCUBElod(_CubeMap, float4(vRDirWS.xyz, _MipIntensity));
                 float fresnel = pow(1 - dot(vDirWS, nDirWS), _FresnelPow);
                 float ao = tex2D(_AOTex, i.uv);
                 float3 emissive = tex2D(_MainTex, i.uv);
+                float2 matcapUV = nDirVS.rg * 0.5 + 0.5;
+                float3 matcap = tex2D(_MatCap, matcapUV);
                 
                 float top = max(0.0, nDirWS.g);
                 float bottom = max(0.0, -nDirWS.g);
@@ -121,7 +120,7 @@
                 float3 phong = pow(max(0.0, vrDotL), _SpecPow) * _SpecCol;
                 float shadow = LIGHT_ATTENUATION(i);
                 float3 envDiffuse = _BaseCol * (_EnvTopCol * top + _EnvMiddleCol * middle + _EnvBottomCol * bottom) * ao * _EnvRatio;
-                float3 envReflect = cubeMap * fresnel * ao * _ReflectIntensity;
+                float3 envReflect = matcap * fresnel * ao * _ReflectIntensity;
                 float3 finalCol = emissive.rgb * _BaseCol * shadow * lambert;
                 
                 #if !defined(_SPECTOG_OFF)
