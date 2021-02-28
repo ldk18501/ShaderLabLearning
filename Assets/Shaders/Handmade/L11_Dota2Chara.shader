@@ -1,13 +1,14 @@
-﻿Shader "LDKCustom/L10_OldSchoolPro+"
+﻿Shader "LDKCustom/L11_Dota2Chara"
 {
     Properties
     {
         [Header(Texture)]//贴图
-        _MainTex ("RGB:基础颜色 A:环境遮罩", 2D) = "white" { }
+        _MainTex ("RGB:基础颜色", 2D) = "white" { }
         _NormalMap ("RGB:法线贴图", 2D) = "bump" { }
-        _SpecTex ("RGB:高光颜色 A:高光次幂", 2D) = "gray" { }
-        _EmitTex ("RGB:自发光遮罩", 2D) = "black" { }
+        _SpecTex ("RGB:高光遮罩", 2D) = "gray" { }
+        _SpecPowTex ("RGB:高光次幂", 2D) = "gray" { }
         _CubeMap ("RGB:CubeMap采样图", Cube) = "_Skybox" { }
+        _EmitTex ("RGB:自发光遮罩", 2D) = "black" { }
         
         [Header(Diffuse)]//漫反射
         _BaseCol ("基础色", Color) = (1, 1, 1, 1)
@@ -23,7 +24,7 @@
         _ReflectIntensity ("反射强度", Range(1, 2)) = 1
         
         [Header(Emission)]//自发光
-        _EmitIntensity ("自发光强度", Range(1, 10)) = 1
+        _EmitCol ("自发光颜色", Color) = (0, 0, 0, 1)
         
         [Header(Toggle)]//开关
         [ToggleOff] _EnvLitTog ("环境光开关", Int) = 1
@@ -58,8 +59,9 @@
             uniform float4 _MainTex_ST;
             uniform sampler2D _NormalMap;
             uniform sampler2D _SpecTex;
-            uniform sampler2D _EmitTex;
+            uniform sampler2D _SpecPowTex;
             uniform samplerCUBE _CubeMap;
+            uniform sampler2D _EmitTex;
             //Diffuse
             uniform float3 _BaseCol;
             uniform float _EnvRatio;
@@ -72,7 +74,7 @@
             uniform float _FresnelPow;
             uniform float _ReflectIntensity;
             //Emission
-            uniform float _EmitIntensity;
+            uniform float3 _EmitCol;
             
             struct VertexInput
             {
@@ -120,16 +122,17 @@
                 //采样
                 float4 var_MainTex = tex2D(_MainTex, i.uv);
                 float4 var_SpecTex = tex2D(_SpecTex, i.uv);
+                float4 var_SpecPowTex = tex2D(_SpecPowTex, i.uv);
                 float4 var_EmitTex = tex2D(_EmitTex, i.uv);
                 //lerp的含义：用高光贴图来判断一个像素是属于光滑部位还是粗糙部位，越光滑的值越趋近于1（白色），对应的mip值为0的反射越光滑（不mip），否则趋近于指定的强度
-                float4 var_CubeMap = texCUBElod(_CubeMap, float4(vRDirWS, lerp(_MipIntensity, 0, var_SpecTex.a)));
+                float4 var_CubeMap = texCUBElod(_CubeMap, float4(vRDirWS, lerp(_MipIntensity, 0, var_SpecPowTex.r)));
                 //计算光照模型
                 //光源漫反射
                 float3 lambert = saturate(lDotN);
                 float shadow = LIGHT_ATTENUATION(i);
                 //光源镜面反射
                 //同理，高光也需要用lerp制造光滑和粗糙表面的差异性
-                float specPow = lerp(1, _SpecPow, var_SpecTex.a);
+                float specPow = lerp(1, _SpecPow, var_SpecPowTex.r);
                 float3 phong = pow(saturate(vRDotL), specPow);
                 //环境漫反射
                 float occlusion = var_MainTex.a;
@@ -140,8 +143,9 @@
                 //环境镜面反射
                 float fresnel = pow(1 - dot(vDirWS, nDirWS), _FresnelPow);
                 float3 envReflect = var_CubeMap.rgb * fresnel * occlusion * _ReflectIntensity;
+                
                 //自发光
-                float3 emission = _EmitIntensity * var_EmitTex.rgb;
+                float3 emission = _EmitCol * var_EmitTex.rgb;
                 
                 //混合结果
                 float3 finalCol = var_MainTex.rgb * _BaseCol * lambert;

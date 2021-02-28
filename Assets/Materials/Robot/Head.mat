@@ -84,9 +84,9 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EmitIntensity: 1.73
+    - _EmitIntensity: 1
     - _EnvLitTog: 1
-    - _EnvRatio: 0
+    - _EnvRatio: 0.449
     - _EnvReflectTog: 1
     - _FresnelPow: 1
     - _GlossMapScale: 1
@@ -111,6 +111,6 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EnvBottomCol: {r: 0, g: 0, b: 0, a: 1}
     - _EnvMiddleCol: {r: 0, g: 0, b: 0, a: 1}
-    - _EnvTopCol: {r: 0, g: 0, b: 0, a: 1}
+    - _EnvTopCol: {r: 0.961355, g: 1, b: 0.3726415, a: 1}
     - _LightCol: {r: 1, g: 1, b: 1, a: 1}
     - _SpecCol: {r: 0.9339623, g: 0, b: 0, a: 1}

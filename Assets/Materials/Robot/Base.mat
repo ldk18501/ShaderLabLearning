@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Body
+  m_Name: Base
   m_Shader: {fileID: 4800000, guid: 0f59122f8b94d5b4a96df66c4caa893a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -52,7 +52,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: d3c60bf5936ee2b4aa71f97d51a77e51, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4d0e75170fd448547a4418cca03c5012, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatCap:
@@ -64,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: c425f310f0f46794e9fa3ed135f9d4eb, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -76,7 +76,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecTex:
-        m_Texture: {fileID: 2800000, guid: 532bc30ce4e1069458db2b5a1bd71619, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -86,14 +86,14 @@ Material:
     - _DstBlend: 0
     - _EmitIntensity: 1
     - _EnvLitTog: 1
-    - _EnvRatio: 0.399
+    - _EnvRatio: 0.5
     - _EnvReflectTog: 1
-    - _FresnelPow: 1
+    - _FresnelPow: 2
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
-    - _MipIntensity: 2
+    - _MipIntensity: 5
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
@@ -109,8 +109,8 @@ Material:
     - _BaseCol: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EnvBottomCol: {r: 1, g: 0, b: 0.14192963, a: 1}
+    - _EnvBottomCol: {r: 0, g: 0, b: 0, a: 1}
     - _EnvMiddleCol: {r: 0, g: 0, b: 0, a: 1}
-    - _EnvTopCol: {r: 0, g: 0, b: 0, a: 1}
+    - _EnvTopCol: {r: 0, g: 0.587447, b: 0.6320754, a: 1}
     - _LightCol: {r: 1, g: 1, b: 1, a: 1}
     - _SpecCol: {r: 0.9339623, g: 0, b: 0, a: 1}
