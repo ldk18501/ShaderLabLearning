@@ -7,20 +7,20 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: D2_OrgeMagi_Back
-  m_Shader: {fileID: 4800000, guid: d117787004a21714c9d581dc87906b12, type: 3}
+  m_Name: D2_OrgeMagi_Arms 1
+  m_Shader: {fileID: 4800000, guid: e1b4a46535d346e4d87666269d358bae, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _AlphaTex:
-        m_Texture: {fileID: 2800000, guid: 5c1e35ca7b9817f479a51542cf5c3bd1, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -52,15 +52,27 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmitTex:
-        m_Texture: {fileID: 2800000, guid: 01bf6b3cc9114174eb46ad79ab4eaa75, type: 3}
+        m_Texture: {fileID: 2800000, guid: 31c28e5f9da500e44ad90c21560b3011, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FresnelColTex:
+        m_Texture: {fileID: 2800000, guid: 15d9ec2137902ed4f8815317aa80f378, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FresnelRimTex:
+        m_Texture: {fileID: 2800000, guid: 9d8f584105e32b9469f9abea9ea6b258, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FresnelSpecTex:
+        m_Texture: {fileID: 2800000, guid: 71dde928188f6c244aaf67214f3f07a8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 1f07cea9014938645aeff5ee84686a2a, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5430cbb1e45ac1e4d95a3eef4e6ab070, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetalTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: c350ff2621c669249b6ac7d2f0756a5e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -68,7 +80,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: e7658c0d3fe9fd242af421fd0cd15fdb, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9b0e9590edd30fa43bed6808b03095e2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -80,19 +92,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RimTex:
-        m_Texture: {fileID: 2800000, guid: 77c1c946a169ce44695f001c9823dd97, type: 3}
+        m_Texture: {fileID: 2800000, guid: f128325fe9c6c2843a10782587404a01, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecPowTex:
-        m_Texture: {fileID: 2800000, guid: 4481b6f67a3647940a7078bdaf30cc92, type: 3}
+        m_Texture: {fileID: 2800000, guid: 8b37ff84f0d21e949bfbd96179e61652, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecTex:
-        m_Texture: {fileID: 2800000, guid: 6e8898e3be6e4be4aa966147a3d9767a, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3edd2e85c31f5f743ba12403d07b04e2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TintTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 3a516bbfb271b0f4eb6ae5e4d2ffc570, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -100,10 +112,11 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EnvDiffTog: 1
     - _EnvLitTog: 1
-    - _EnvRatio: 0
+    - _EnvRatio: 0.3
     - _EnvReflectTog: 1
-    - _FresnelPow: 2
+    - _FresnelPow: 2.77
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -112,9 +125,12 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectIntensity: 1
+    - _ReflectIntensity: 8
+    - _RimIntensity: 5
     - _SmoothnessTextureChannel: 0
-    - _SpecPow: 13
+    - _SpecExpVal: 0.3
+    - _SpecIntensity: 1
+    - _SpecPow: 50
     - _SpecTog: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -124,7 +140,8 @@ Material:
     - _BaseCol: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EmitCol: {r: 0, g: 0, b: 0, a: 1}
+    - _EmitCol: {r: 4, g: 4, b: 4, a: 1}
     - _EnvBottomCol: {r: 0, g: 0, b: 0, a: 0}
     - _EnvMiddleCol: {r: 0, g: 0, b: 0, a: 0}
     - _EnvTopCol: {r: 0, g: 0, b: 0, a: 0}
+    - _RimCol: {r: 2.8323247, g: 3.9140422, b: 3.9245284, a: 1}
