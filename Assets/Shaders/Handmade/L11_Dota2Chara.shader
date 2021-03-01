@@ -4,11 +4,15 @@
     {
         [Header(Texture)]//贴图
         _MainTex ("RGB:基础颜色", 2D) = "white" { }
+        _TintTex ("RGB:颜色遮罩", 2D) = "white" { }
         _NormalMap ("RGB:法线贴图", 2D) = "bump" { }
+        _DiffRampTex ("RGB:漫反射映射", 2D) = "black" { }
         _SpecTex ("RGB:高光遮罩", 2D) = "gray" { }
         _SpecPowTex ("RGB:高光次幂", 2D) = "gray" { }
+        _RimTex ("RGB:边缘高光遮罩", 2D) = "black" { }
         _CubeMap ("RGB:CubeMap采样图", Cube) = "_Skybox" { }
         _EmitTex ("RGB:自发光遮罩", 2D) = "black" { }
+        _AlphaTex ("RGBA:透明通道", 2D) = "white" { }
         
         [Header(Diffuse)]//漫反射
         _BaseCol ("基础色", Color) = (1, 1, 1, 1)
@@ -24,7 +28,7 @@
         _ReflectIntensity ("反射强度", Range(1, 2)) = 1
         
         [Header(Emission)]//自发光
-        _EmitCol ("自发光颜色", Color) = (0, 0, 0, 1)
+        [HDR] _EmitCol ("自发光颜色", Color) = (0, 0, 0, 1)
         
         [Header(Toggle)]//开关
         [ToggleOff] _EnvLitTog ("环境光开关", Int) = 1
@@ -38,6 +42,7 @@
         {
             Name "FORWARD"
             Tags { "LightMode" = "ForwardBase" }
+            Blend SrcAlpha OneMinusSrcAlpha
             
             CGPROGRAM
             
@@ -55,13 +60,16 @@
             #pragma shader_feature _ENVREFLECTTOG_OFF
             
             //Texture
-            uniform sampler2D _MainTex;
-            uniform float4 _MainTex_ST;
+            uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
+            uniform sampler2D _TintTex;
             uniform sampler2D _NormalMap;
+            uniform sampler2D _DiffRampTex;
             uniform sampler2D _SpecTex;
             uniform sampler2D _SpecPowTex;
             uniform samplerCUBE _CubeMap;
+            uniform sampler2D _RimTex;
             uniform sampler2D _EmitTex;
+            uniform sampler2D _AlphaTex;
             //Diffuse
             uniform float3 _BaseCol;
             uniform float _EnvRatio;
@@ -119,38 +127,41 @@
                 //向量点积
                 float lDotN = dot(lDir, nDirWS);
                 float vRDotL = dot(lDir, vRDirWS);
+                float vDotN = dot(vDirWS, nDirWS);
                 //采样
                 float4 var_MainTex = tex2D(_MainTex, i.uv);
+                float4 var_TintTex = tex2D(_TintTex, i.uv);
                 float4 var_SpecTex = tex2D(_SpecTex, i.uv);
                 float4 var_SpecPowTex = tex2D(_SpecPowTex, i.uv);
                 float4 var_EmitTex = tex2D(_EmitTex, i.uv);
+                float4 var_DiffRampTex = tex2D(_DiffRampTex, float2(saturate(lDotN * 0.5 + 0.5), 0.1));
+                float4 var_RimTex = tex2D(_RimTex, i.uv);
+                float4 var_AlphaTex = tex2D(_AlphaTex, i.uv);
                 //lerp的含义：用高光贴图来判断一个像素是属于光滑部位还是粗糙部位，越光滑的值越趋近于1（白色），对应的mip值为0的反射越光滑（不mip），否则趋近于指定的强度
                 float4 var_CubeMap = texCUBElod(_CubeMap, float4(vRDirWS, lerp(_MipIntensity, 0, var_SpecPowTex.r)));
                 //计算光照模型
                 //光源漫反射
-                float3 lambert = saturate(lDotN);
+                float3 lambert = var_DiffRampTex.a == 0 ? saturate(lDotN): var_DiffRampTex.rgb;
                 float shadow = LIGHT_ATTENUATION(i);
                 //光源镜面反射
                 //同理，高光也需要用lerp制造光滑和粗糙表面的差异性
                 float specPow = lerp(1, _SpecPow, var_SpecPowTex.r);
                 float3 phong = pow(saturate(vRDotL), specPow);
                 //环境漫反射
-                float occlusion = var_MainTex.a;
-                float top = max(0.0, nDirWS.g);
-                float bottom = max(0.0, -nDirWS.g);
-                float middle = 1.0 - top - bottom;
-                float3 envDiffuse = var_MainTex.rgb * _BaseCol * TriColAmbient(nDirWS, _EnvTopCol, _EnvMiddleCol, _EnvBottomCol) * occlusion * _EnvRatio;
+                float3 envDiffuse = var_MainTex.rgb * _BaseCol * TriColAmbient(nDirWS, _EnvTopCol, _EnvMiddleCol, _EnvBottomCol) * _EnvRatio;
                 //环境镜面反射
-                float fresnel = pow(1 - dot(vDirWS, nDirWS), _FresnelPow);
-                float3 envReflect = var_CubeMap.rgb * fresnel * occlusion * _ReflectIntensity;
-                
+                float fresnel = pow(1 - max(0, vDotN), _FresnelPow);
+                float3 envReflect = var_CubeMap.rgb * fresnel * _ReflectIntensity;
+                //边缘光
+                float3 rimCol = var_RimTex.rgb * fresnel;
                 //自发光
                 float3 emission = _EmitCol * var_EmitTex.rgb;
                 
                 //混合结果
-                float3 finalCol = var_MainTex.rgb * _BaseCol * lambert;
+                float3 finalCol = var_MainTex.rgb * _BaseCol * lambert * var_TintTex.rgb;
                 #if !defined(_SPECTOG_OFF)
                     finalCol += phong * var_SpecTex.rgb;
+                    
                 #endif
                 //有高光也需要乘投影，否则会导致阴影部分高光突兀
                 finalCol *= _LightColor0.rgb * shadow;
@@ -161,10 +172,12 @@
                 
                 #if !defined(_ENVREFLECTTOG_OFF)
                     finalCol += envReflect;
+                    finalCol = saturate(max(rimCol, finalCol));
                 #endif
                 
                 finalCol += emission;
-                return fixed4(finalCol, 1.0);
+                
+                return fixed4(finalCol, var_AlphaTex.r);
             }
             ENDCG
             

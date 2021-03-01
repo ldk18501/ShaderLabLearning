@@ -60,8 +60,7 @@ Shader "Shader Forge/SF_TestLerp" {
                 float4 _FirstTex_var = tex2D(_FirstTex,TRANSFORM_TEX(i.uv0, _FirstTex));
                 float4 _SecondTex_var = tex2D(_SecondTex,TRANSFORM_TEX(i.uv0, _SecondTex));
                 float _SldLerp_var = UNITY_ACCESS_INSTANCED_PROP( Props, _SldLerp );
-                float3 node_9531 = lerp(_FirstTex_var.rgb,_SecondTex_var.rgb,_SldLerp_var);
-                float3 emissive = node_9531;
+                float3 emissive = lerp(_FirstTex_var.rgb,_SecondTex_var.rgb,_SldLerp_var);
                 float3 finalColor = emissive;
                 return fixed4(finalColor,lerp(_FirstTex_var.a,_SecondTex_var.a,_SldLerp_var));
             }

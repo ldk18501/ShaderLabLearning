@@ -117,6 +117,7 @@
                 //向量点积
                 float lDotN = dot(lDir, nDirWS);
                 float vRDotL = dot(lDir, vRDirWS);
+                float vDotN = dot(vDirWS, nDirWS);
                 //采样
                 float4 var_MainTex = tex2D(_MainTex, i.uv);
                 float4 var_SpecTex = tex2D(_SpecTex, i.uv);
@@ -133,12 +134,9 @@
                 float3 phong = pow(saturate(vRDotL), specPow);
                 //环境漫反射
                 float occlusion = var_MainTex.a;
-                float top = max(0.0, nDirWS.g);
-                float bottom = max(0.0, -nDirWS.g);
-                float middle = 1.0 - top - bottom;
                 float3 envDiffuse = var_MainTex.rgb * _BaseCol * TriColAmbient(nDirWS, _EnvTopCol, _EnvMiddleCol, _EnvBottomCol) * occlusion * _EnvRatio;
                 //环境镜面反射
-                float fresnel = pow(1 - dot(vDirWS, nDirWS), _FresnelPow);
+                float fresnel = pow(1 - saturate(vDotN), _FresnelPow);
                 float3 envReflect = var_CubeMap.rgb * fresnel * occlusion * _ReflectIntensity;
                 //自发光
                 float3 emission = _EmitIntensity * var_EmitTex.rgb;
