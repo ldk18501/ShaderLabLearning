@@ -3,6 +3,7 @@
     Properties
     {
         _MainTex ("RGB：贴图  A：透明通道", 2D) = "white" { }
+        _Opacity ("透明度", Range(0, 1)) = 0.5
     }
     SubShader
     {
@@ -21,6 +22,7 @@
             #pragma multi_compile_fwdbase_fullshadows
             
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
+            uniform float _Opacity;
             
             struct VertexInput
             {
@@ -41,8 +43,10 @@
             }
             float4 frag(VertexOutput i): COLOR
             {
-                half4 var_MainTex = tex2D(_MainTex, i.uv0);
-                return var_MainTex;
+                float4 var_MainTex = tex2D(_MainTex, i.uv0);
+                float3 finalCol = var_MainTex.rgb;
+                float opacity = var_MainTex.a * _Opacity;
+                return float4(finalCol * opacity, opacity);
             }
             ENDCG
             

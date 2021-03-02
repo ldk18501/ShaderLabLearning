@@ -9,4 +9,8 @@
         return topCol * top + sideCol * side + bottomCol * bottom;
     }
     
+    float remapSimple(float x, float t1, float t2, float s1, float s2)
+    {
+        return(x - t1) / (t2 - t1) * (s2 - s1) + s1;
+    }
 #endif
