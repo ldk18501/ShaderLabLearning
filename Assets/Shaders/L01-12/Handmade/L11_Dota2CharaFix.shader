@@ -41,6 +41,8 @@
         [ToggleOff] _SpecTog ("高光开关", Int) = 1
         [ToggleOff] _EnvDiffTog ("环境光开关", Int) = 1
         [ToggleOff] _EnvReflectTog ("环境反射开关", Int) = 1
+        
+        [HideInInspector] _Cutoff ("Alpha cutoff", Range(0, 1)) = 0.5
     }
     SubShader
     {
@@ -49,7 +51,6 @@
         {
             Name "FORWARD"
             Tags { "LightMode" = "ForwardBase" }
-            Blend SrcAlpha OneMinusSrcAlpha
             Cull Off
             
             CGPROGRAM
@@ -97,6 +98,9 @@
             uniform float3 _RimCol;
             //Emission
             uniform float3 _EmitCol;
+            
+            //AlphaCutout
+            uniform float _Cutoff;
             
             struct VertexInput
             {
@@ -210,7 +214,63 @@
                 
                 finalCol += emission;
                 
-                return fixed4(finalCol, var_AlphaTex.r);
+                clip(var_AlphaTex.r - _Cutoff);
+                return fixed4(finalCol, 1.0);
+            }
+            ENDCG
+            
+        }
+        
+        
+        // Pass to render object as a shadow caster
+        Pass
+        {
+            Name "Caster"
+            Tags { "LightMode" = "ShadowCaster" }
+            
+            CGPROGRAM
+            
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma target 2.0
+            #pragma multi_compile_shadowcaster
+            #pragma multi_compile_instancing // allow instanced shadow pass for most of the shaders
+            #include "UnityCG.cginc"
+            
+            struct VertexInput
+            {
+                float4 vertex: POSITION;
+                float4 normal: NORMAL;
+                float4 tangent: TANGENT;
+                float2 uv0: TEXCOORD0;
+            };
+            
+            struct VertexOutput
+            {
+                V2F_SHADOW_CASTER;
+                float2 uv: TEXCOORD1;
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+            
+            VertexOutput vert(VertexInput v)
+            {
+                VertexOutput o;
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+                o.uv = v.uv0;
+                return o;
+            }
+            
+            uniform fixed _Cutoff;
+            uniform sampler2D _AlphaTex;
+            
+            float4 frag(VertexOutput i): SV_Target
+            {
+                fixed4 texcol = tex2D(_AlphaTex, i.uv);
+                clip(texcol.r - _Cutoff);
+                
+                SHADOW_CASTER_FRAGMENT(i)
             }
             ENDCG
             
