@@ -8,7 +8,6 @@
         
         _AnimCol ("序列帧列数", Int) = 1
         _AnimRow ("序列帧行数", Int) = 1
-        
         _AnimSpd ("帧速", Float) = 0
     }
     SubShader
@@ -81,6 +80,7 @@
             {
                 float4 vertex: POSITION;
                 float2 uv0: TEXCOORD0;
+                float4 normal: NORMAL;
             };
             struct VertexOutput
             {
@@ -90,6 +90,8 @@
             VertexOutput vert(VertexInput v)
             {
                 VertexOutput o = (VertexOutput)0;
+                //向法线方向扩大，可用于做外描边（Cull Front）
+                v.vertex += v.normal * 0.02;
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv0 = v.uv0 * _AnimTex_ST.xy + _AnimTex_ST.zw;
                 
