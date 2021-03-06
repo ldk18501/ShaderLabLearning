@@ -45,7 +45,7 @@
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
             #include "Lighting.cginc"
-            #include "../Cginc/LDKCginc.cginc"
+            #include "../../Cginc/LDKCginc.cginc"
             #pragma multi_compile_fwdbase_fullshadows
             
             //Toggles
